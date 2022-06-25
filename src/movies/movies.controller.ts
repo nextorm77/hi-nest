@@ -48,11 +48,6 @@ export class MoviesController {
 
   @Patch(':id')
   patch(@Param('id') movieId: string, @Body() updateData) {
-    //return `This will update a movie with the id: ${movieId}`;
-    // JSON 중간조작 없이 출력
-    return {
-      updatedMovie: movieId,
-      ...updateData,
-    };
+    return this.moviesService.update(movieId, updateData);
   }
 }
