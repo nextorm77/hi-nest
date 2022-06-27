@@ -15,6 +15,7 @@ import { MoviesService } from './movies.service';
 
 @Controller('movies')
 export class MoviesController {
+  // MoviesService 타입 선언만으로 잘 작동: dependency injection
   constructor(private readonly moviesService: MoviesService) {}
 
   @Get()
