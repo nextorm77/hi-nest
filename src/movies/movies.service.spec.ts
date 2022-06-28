@@ -53,7 +53,7 @@ describe('MoviesService', () => {
       });
       */
       try {
-        // it() 단위별로 테스트되므로
+        // it() 단위별 격리되어 테스트되므로
         // service.create()를 실행하지 않으면
         // 항상 에러 발생
         service.getOne(1);
@@ -61,6 +61,53 @@ describe('MoviesService', () => {
         expect(e).toBeInstanceOf(NotFoundException);
         expect(e.message).toEqual(`Not found movie with ID: 1`);
       }
+    });
+  });
+
+  describe('deleteOne', () => {
+    it('should deletes a movie', () => {
+      service.create({
+        title: 'Test movie',
+        year: 2020,
+        genres: ['test'],
+      });
+      /* 다른 테스트 코드
+      const movie = service.getOne(1);
+      expect(movie.id).toEqual(1);
+      service.deleteOne(1);
+      try {
+        service.getOne(1);
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+        expect(e.message).toEqual(`Not found movie with ID: 1`);
+      }
+      */
+      const beforDelete = service.getAll().length;
+      service.deleteOne(1);
+      const afterDelete = service.getAll().length;
+      expect(afterDelete).toBeLessThan(beforDelete);
+    });
+    it('should return a 404', () => {
+      try {
+        service.deleteOne(1);
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+        expect(e.message).toEqual(`Not found movie with ID: 1`);
+      }
+    });
+  });
+
+  describe('create', () => {
+    it('should create a movie', () => {
+      const beforeCreate = service.getAll().length;
+      service.create({
+        title: 'Top gun: Maverick',
+        year: 2022,
+        genres: ['milirary', 'aviation'],
+      });
+      const afterCreate = service.getAll().length;
+      //console.log(beforeCreate, afterCreate);
+      expect(afterCreate).toBeGreaterThan(beforeCreate);
     });
   });
 });
