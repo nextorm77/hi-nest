@@ -8,6 +8,10 @@ import { MoviesService } from './movies.service';
 describe('MoviesService', () => {
   let service: MoviesService;
 
+  // 일종의 Hook?
+  // 유사 기능: afterEach, afterAll(DB 초기화 기능 삽입), beforeAll 등
+  // 격리된 it()별 선 처리코드 기재
+  // service 객체가 it()별로 새로 생성
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [MoviesService],
@@ -44,7 +48,7 @@ describe('MoviesService', () => {
       expect(movie.id).toEqual(1);
       expect(movie.title).toEqual('Test movie');
     });
-    it('should throw 404 error', () => {
+    it('should throw a NotFoundException', () => {
       /*
       service.create({
         title: 'Test movie',
@@ -87,7 +91,7 @@ describe('MoviesService', () => {
       const afterDelete = service.getAll().length;
       expect(afterDelete).toBeLessThan(beforDelete);
     });
-    it('should return a 404', () => {
+    it('should throw a NotFoundException', () => {
       try {
         service.deleteOne(1);
       } catch (e) {
@@ -108,6 +112,27 @@ describe('MoviesService', () => {
       const afterCreate = service.getAll().length;
       //console.log(beforeCreate, afterCreate);
       expect(afterCreate).toBeGreaterThan(beforeCreate);
+    });
+  });
+
+  describe('update', () => {
+    it('should update a movie', () => {
+      service.create({
+        title: 'Top gun: Maverick',
+        year: 2022,
+        genres: ['milirary', 'aviation'],
+      });
+      service.update(1, { title: 'updated movie' });
+      const movie = service.getOne(1);
+      expect(movie.title).toEqual('updated movie');
+    });
+    it('should throw a NotFoundException', () => {
+      try {
+        service.update(1, { title: 'updated movie' });
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+        expect(e.message).toEqual(`Not found movie with ID: 1`);
+      }
     });
   });
 });
