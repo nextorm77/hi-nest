@@ -16,9 +16,33 @@ describe('AppController (e2e)', () => {
   });
 
   it('/ (GET)', () => {
+    // app.getHeepServer(): http://localhost:3000 대체
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect('Hello World!');
+      .expect('Welcome to my Movie API');
+  });
+
+  describe('/movies', () => {
+    it('GET', () => {
+      return request(app.getHttpServer()).get('/movies').expect(200).expect([]);
+    });
+
+    // .expect(201): 생성되었다?
+    it('POST', () => {
+      return request(app.getHttpServer())
+        .post('/movies')
+        .send({
+          title: 'Test movie',
+          year: 2010,
+          genres: ['sf'],
+        })
+        .expect(201);
+    });
+
+    it('DELETE', () => {
+      // .expect(404): NotFound 에러
+      return request(app.getHttpServer()).delete('/movies').expect(404);
+    });
   });
 });
