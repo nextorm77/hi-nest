@@ -15,6 +15,7 @@ export class MoviesService {
 
   getOne(id: number): Movie {
     // parseInt(id) -> +id: string을 number로 변환
+    //console.log(typeof id);
     const movie = this.movies.find((movie) => movie.id === id);
     if (!movie) {
       throw new NotFoundException(`Not found movie with ID: ${id}`);
