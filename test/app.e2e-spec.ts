@@ -46,12 +46,12 @@ describe('AppController (e2e)', () => {
   });
 
   describe('/movies', () => {
-    it('GET', () => {
+    it('GET 200', () => {
       return request(app.getHttpServer()).get('/movies').expect(200).expect([]);
     });
 
     // .expect(201): 생성되었다?
-    it('POST', () => {
+    it('POST 201', () => {
       return request(app.getHttpServer())
         .post('/movies')
         .send({
@@ -60,6 +60,19 @@ describe('AppController (e2e)', () => {
           genres: ['sf'],
         })
         .expect(201);
+    });
+
+    // ValidationPipe의 forbidNonWhitelisted 속성으로 감지
+    it('POST 400', () => {
+      return request(app.getHttpServer())
+        .post('/movies')
+        .send({
+          title: 'Test movie',
+          year: 2010,
+          genres: ['sf'],
+          other: 'thing',
+        })
+        .expect(400);
     });
 
     it('DELETE', () => {
@@ -75,14 +88,25 @@ describe('AppController (e2e)', () => {
     it.todo('PATCH');
     */
     // 앞의 테스트에서 이미 DB 데이터 생성
+    // 데이터 존재 유무 고려한 순서로 테스트 배치
     // .expect(200)은 원하는 movie를 찾았다는 뜻
     it('GET 200', () => {
       return request(app.getHttpServer()).get('/movies/1').expect(200);
     });
+
     it('GET 404', () => {
       return request(app.getHttpServer()).get('/movies/2').expect(404);
     });
-    it.todo('DELETE');
-    it.todo('PATCH');
+
+    it('PATCH 200', () => {
+      return request(app.getHttpServer())
+        .patch('/movies/1')
+        .send({ title: 'updated title' })
+        .expect(200);
+    });
+
+    it('DELETE 200', () => {
+      return request(app.getHttpServer()).delete('/movies/1').expect(200);
+    });
   });
 });
